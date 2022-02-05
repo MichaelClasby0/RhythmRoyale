@@ -1,0 +1,14 @@
+@import "LayoutVariables";
+
+div.primary-content--wrap {
+  height: calc(100vh - 85px);
+  padding: 40px 0;
+}
+
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
+}

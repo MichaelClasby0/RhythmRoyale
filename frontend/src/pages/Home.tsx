@@ -1,8 +1,18 @@
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Container from "react-bootstrap/Container";
+import PrimaryContent from "../layout/PrimaryContent";
+
 function Home() {
     return(
-        <div>
-            <p>Hello World</p>
-        </div>
+        <PrimaryContent>
+            <Form>
+                <Form.Control size="lg" type="text" placeholder="Nickname" />
+                <br/>
+                <br/>
+                <Button variant="success">Play</Button>
+            </Form>
+        </PrimaryContent>
     )
 }
 
