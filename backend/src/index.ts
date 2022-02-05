@@ -4,20 +4,35 @@ import path from "path";
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-
-app.use(express.json());
-// Serve the React static files after build
-app.use(express.static("../frontend/build"));
-
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
+const rooms: { [name: string]: string[] } = { }
 
 app.get("/api/hello", (req, res) => {
   res.send({ message: "Hello" });
 });
 
-// All other unmatched requests will return the React app
 app.get("/", (req, res) => {
   res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
 });
+
+app.get("/",  (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+})
+
+io.on("connection", function (socket: any) {
+  const newGameId = Math.random().toString(20).slice(2, 6);
+
+});
+
+app.use(express.json());
+app.use(express.static("../frontend/build"));
+server.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
+
