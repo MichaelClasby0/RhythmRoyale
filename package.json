@@ -1,4 +1,14 @@
 {
+  "name": "rhythm-royale",
+  "description": "Rhythm based battle royale game.",
+  "scripts": {
+    "start": "cd backend/ && yarn run start",
+    "build": "cd frontend/ && yarn install && yarn run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelClasby0/RhythmRoyale"
+  },
   "dependencies": {
     "express": "^4.17.2"
   },
