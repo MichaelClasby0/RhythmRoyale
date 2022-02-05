@@ -1,16 +1,30 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Container from "react-bootstrap/Container";
 import PrimaryContent from "../layout/PrimaryContent";
+import { useNavigate } from "react-router-dom";
+import {useState} from "react";
 
 function Home() {
+    const navigate = useNavigate();
+    const [name, setName] = useState("")
+    const onFormSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault()
+        localStorage.setItem("name", name)
+        navigate("/lobby");
+    }
     return(
         <PrimaryContent>
-            <Form>
-                <Form.Control size="lg" type="text" placeholder="Nickname" />
+            <Form onSubmit={onFormSubmit}>
+                <Form.Control
+                    size="lg"
+                    type="text"
+                    placeholder="Nickname"
+                    onChange={({target:{value}}) => setName(value)}
+                    value={name}
+                />
                 <br/>
                 <br/>
-                <Button variant="success">Play</Button>
+                <Button type="submit" variant="success">Play</Button>
             </Form>
         </PrimaryContent>
     )
