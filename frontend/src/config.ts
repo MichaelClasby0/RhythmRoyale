@@ -1,1 +1,3 @@
-export const backendUrl = process.env.HEROKU ? '' : 'http://localhost:5000';
+export const backendUrl = process.env.PROD
+  ? "https://rhythm-royale.herokuapp.com"
+  : "http://localhost:5000";
