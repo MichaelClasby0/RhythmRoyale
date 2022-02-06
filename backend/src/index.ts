@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import path from "path";
 import Game from "./game";
+import { generateRhythm } from "./Sound";
 
 // reserve space for user
 
@@ -28,7 +29,7 @@ const io = require("socket.io")(server, {
 });
 
 app.get("/api/hello", (req, res) => {
-  res.send({ message: "Hello" });
+  res.send({ message: generateRhythm() });
 });
 
 app.get("/", (req, res) => {
