@@ -55,5 +55,5 @@ export default function useKeypressBeats(targetKey: any) {
       window.removeEventListener("keyup", upHandler);
     };
   }, [downHandler, upHandler]); // Empty array ensures that effect is only run on mount and unmount
-  return [isDown, beats];
+  return { isDown, beats }            ;
 }

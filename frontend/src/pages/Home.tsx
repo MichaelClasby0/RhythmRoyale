@@ -19,7 +19,9 @@ function Home() {
       );
 
       if (res.status === 200) {
-        navigate(`/game/${await res.text()}`);
+        navigate(
+          `/game/${await res.text()}?${new URLSearchParams({ name: name })}`
+        );
       } else {
         setError(true);
       }

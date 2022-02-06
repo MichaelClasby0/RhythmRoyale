@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { backendUrl } from "../config";
 import PrimaryContent from "../layout/PrimaryContent";
@@ -12,28 +12,28 @@ enum GameState {
 
 export default function Game() {
   const { gameId } = useParams();
-  const socket = useMemo(
-    () => io(backendUrl, { autoConnect: false }),
-    []
-  );
+  const socket = useMemo(() => io(backendUrl, { autoConnect: false }), []);
   const [gameState, setGameState] = useState(GameState.JoiningGame);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // TODO: change hardcoded name
-    socket.connect();
-    console.log("Joining game", gameId);
-    socket.emit("join", gameId, "Larry");
-    socket.on("waiting_for_players", () => {
-      setGameState(GameState.WaitingForPlayers);
-    });
-    socket.on("game_start", () => {
-      setGameState(GameState.Started);
-    });
+    const name = searchParams.get("name");
+    if (name) {
+      socket.connect();
+      console.log("Joining game", gameId, name);
+      socket.emit("join", gameId, name);
+      socket.on("waiting_for_players", () => {
+        setGameState(GameState.WaitingForPlayers);
+      });
+      socket.on("game_start", () => {
+        setGameState(GameState.Started);
+      });
+    }
 
     return () => {
       socket.disconnect();
     };
-  }, [socket, gameId]);
+  }, [socket, gameId, searchParams]);
 
   if (gameState === GameState.JoiningGame) {
     return <p>Joining game...</p>;

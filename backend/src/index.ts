@@ -20,7 +20,6 @@ server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
-
 const io = require("socket.io")(server, {
   cors: {
     origin: "*",
@@ -53,7 +52,7 @@ app.get("/api/room", (req, res) => {
   if (roomFound) {
     return;
   }
-  
+
   console.log("Creating new room");
   const game = new Game(Math.random().toString(20).slice(2, 9));
   game.addPlayer(req.query.name as string);
@@ -66,7 +65,7 @@ io.on("connection", function (socket: any) {
 
   socket.on("join", (gameId: string, name: string) => {
     socket.join(gameId);
-    games[gameId].confirmPlayer(name);
+    games[gameId].confirmPlayer(name, socket.id);
     if (games[gameId].allJoined()) {
       io.to(gameId).emit("game_start");
     } else {
@@ -79,7 +78,12 @@ io.on("connection", function (socket: any) {
   socket.on("disconnect", function () {
     console.log("user disconnected");
 
-    // Wont actually work until people get removed from games
+    socket.rooms.forEach((room: string) => {
+      if (room in games) {
+        games[room].removeConfirmedPlayer(socket.id);
+      }
+    });
+
     Object.entries(games).forEach(([id, game]) => {
       if (game.isEmpty()) {
         delete games[id];

@@ -1,33 +1,65 @@
 import { GAME_SIZE } from ".";
 
+interface PlayerReg {
+  name: string;
+  time: number;
+}
+
 export default class Game {
-  players: string[];
-  confirmedPlayers: string[];
+  players: { [name: string]: number };
+  socketNames: { [socketId: string]: string };
+  confirmedPlayers: Set<string>;
   id: string;
 
   constructor(id: string) {
     this.id = id;
-    this.players = [];
-    this.confirmedPlayers = [];
+    this.players = {};
+    this.socketNames = {};
+    this.confirmedPlayers = new Set<string>();
   }
 
   addPlayer(player: string) {
-    this.players.push(player);
+    this.players[player] = Date.now();
+  }
+
+  cleanup() {
+    for (const name in Object.keys(this.players)) {
+      if (
+        this.players[name] + 5000 < Date.now() &&
+        !(name in this.confirmedPlayers)
+      ) {
+        delete this.players[name];
+      }
+    }
+    console.log(this.players);
+  }
+
+  confirmPlayer(player: string, socketId: string) {
+    this.cleanup();
+    this.confirmedPlayers.add(player);
+    this.socketNames[socketId] = player;
+  }
+
+  removeConfirmedPlayer(socketId: string) {
+    const name = this.socketNames[socketId];
+
+    this.confirmedPlayers.delete(name);
+    delete this.players[name];
+    delete this.socketNames[socketId];
   }
 
   isFull() {
-    return this.players.length === GAME_SIZE;
+    this.cleanup();
+    return Object.keys(this.players).length === GAME_SIZE;
   }
 
   isEmpty() {
-    return this.players.length === 0;
-  }
-
-  confirmPlayer(player: string) {
-    this.confirmedPlayers.push(player);
+    this.cleanup();
+    return Object.keys(this.players).length === 0;
   }
 
   allJoined() {
-    return this.confirmedPlayers.length === GAME_SIZE;
+    this.cleanup();
+    return this.confirmedPlayers.size === GAME_SIZE;
   }
 }
