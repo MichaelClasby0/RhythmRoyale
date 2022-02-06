@@ -1,6 +1,6 @@
 import PrimaryContent from "../layout/PrimaryContent";
-import "./Visualisation.css"
-import {useState, useEffect} from "react";
+import "./Visualisation.css";
+import { useState, useEffect } from "react";
 import useKeypressBeats from "../hooks/useKeyPress";
 
 function Vis() {
@@ -36,7 +36,6 @@ function Vis() {
         </PrimaryContent>
     );
 };
-
 
 // @ts-ignore
 function Anim({original, correct}) {
