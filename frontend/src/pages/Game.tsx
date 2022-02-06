@@ -3,14 +3,16 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import Sound, { convertToSound } from "../components/Sound";
 import { backendUrl } from "../config";
-import PrimaryContent from "../layout/PrimaryContent";
 import * as Tone from "tone";
+import useKeypressBeats from "../hooks/useKeyPress";
+import { Vis } from "../components/Visualisation";
 
 enum GameState {
   JoiningGame,
   WaitingForPlayers,
   Listening,
   Countdown,
+  WaitingForResults,
   Started,
 }
 
@@ -73,7 +75,7 @@ export default function Game() {
 
       return () => clearInterval(timer);
     }
-  }, [gameState]);
+  }, [gameState, socket]);
 
   if (gameState === GameState.JoiningGame) {
     return <p>Joining game...</p>;
@@ -102,10 +104,26 @@ export default function Game() {
           alignItems: "center",
         }}
       >
-        {countdownTime === 0 ? <p>GO!</p> : <h1>{countdownTime}</h1>}
+        <h1>{countdownTime === 0 ? "GO!" : countdownTime}</h1>
       </div>
     );
   }
 
-  return <p>Playing Game</p>;
+  return (
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Vis
+        onEnd={(beats) => {
+          socket.emit("results", beats);
+          setGameState(GameState.WaitingForResults);
+        }}
+      />
+    </div>
+  );
 }

@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
+import Sound from "../components/Sound";
 
-interface Temp {
-  type: string;
-  duration: number;
-}
-
-export default function useKeypressBeats(targetKey: any) {
+export default function useKeypressBeats(targetKey: any, disabled: boolean) {
   // State for keeping track of whether key is pressed
-  const [beats, setBeats] = useState<Temp[]>([]);
+  const [beats, setBeats] = useState<Sound[]>([]);
   const [actionTime, setActionTime] = useState<number>(0);
   const [isDown, setIsDown] = useState<boolean>(false);
 
@@ -47,13 +43,17 @@ export default function useKeypressBeats(targetKey: any) {
 
   // Add event listeners
   useEffect(() => {
-    window.addEventListener("keydown", downHandler);
-    window.addEventListener("keyup", upHandler);
+    if (!disabled) {
+      window.addEventListener("keydown", downHandler);
+      window.addEventListener("keyup", upHandler);
+    }
     // Remove event listeners on cleanup
     return () => {
-      window.removeEventListener("keydown", downHandler);
-      window.removeEventListener("keyup", upHandler);
+      if (!disabled) {
+        window.removeEventListener("keydown", downHandler);
+        window.removeEventListener("keyup", upHandler);
+      }
     };
-  }, [downHandler, upHandler]); // Empty array ensures that effect is only run on mount and unmount
-  return { isDown, beats }            ;
+  }, [downHandler, disabled, upHandler]); // Empty array ensures that effect is only run on mount and unmount
+  return { isDown, beats };
 }
