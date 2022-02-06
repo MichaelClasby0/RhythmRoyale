@@ -68,7 +68,7 @@ io.on("connection", function (socket: any) {
     socket.join(gameId);
     games[gameId].confirmPlayer(name, socket.id);
     if (games[gameId].allJoined()) {
-      io.to(gameId).emit("game_start", games[gameId].getRandomRhythm());
+      io.to(gameId).emit("start_round", games[gameId].getRandomRhythm());
     } else {
       socket.emit("waiting_for_players");
     }
