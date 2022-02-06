@@ -1,14 +1,29 @@
-import { FormEvent, useCallback, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import { convertToSound } from "../components/Sound";
 import { backendUrl } from "../config";
+import * as Tone from "tone";
 
 function Home() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [findingRoom, setFindingRoom] = useState(false);
   const [error, setError] = useState(false);
+
+  // useEffect(() => {
+  //   convertToSound(
+  //     [
+  //       { type: "beat", duration: 1000 },
+  //       { type: "gap", duration: 500 },
+  //       { type: "beat", duration: 2000 },
+  //       { type: "gap", duration: 500 },
+  //       { type: "beat", duration: 1000 },
+  //     ],
+  //     new Tone.PolySynth(Tone.Synth).toDestination()
+  //   );
+  // });
 
   const onFormSubmit = useCallback(
     async (e: FormEvent) => {
