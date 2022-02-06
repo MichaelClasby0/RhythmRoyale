@@ -1,6 +1,3 @@
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Container from "react-bootstrap/Container";
 import PrimaryContent from "../layout/PrimaryContent";
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";

@@ -1,16 +1,39 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import { backendUrl } from "../config";
 
 function Home() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const onFormSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    localStorage.setItem("name", name);
-    navigate("/lobby");
-  };
+  const [findingRoom, setFindingRoom] = useState(false);
+  const [error, setError] = useState(false);
+
+  const onFormSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setFindingRoom(true);
+      const res = await fetch(
+        `${backendUrl}/api/room?${new URLSearchParams({ name: name })}`
+      );
+
+      if (res.status === 200) {
+        navigate(`/game/${await res.text()}`);
+      } else {
+        setError(true);
+      }
+    },
+    [name, navigate]
+  );
+
+  if (error) {
+    return <p>Failed to find a room please try again later</p>;
+  }
+
+  if (findingRoom) {
+    return <p>Finding a room ...</p>;
+  }
 
   return (
     <div
@@ -28,7 +51,7 @@ function Home() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <h1 style={{ fontSize: "70px" }}>Rhythm Royale</h1>

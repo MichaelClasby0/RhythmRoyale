@@ -1,0 +1,1 @@
+export const backendUrl = process.env.HEROKU ? '' : 'http://localhost:5000';
