@@ -2,12 +2,12 @@ import cors from "cors";
 import express from "express";
 import path from "path";
 import Game from "./game";
-import { generateRhythm } from "./Sound";
+import Sound, { generateRhythm } from "./Sound";
 
 // reserve space for user
 
 const PORT = process.env.PORT || 5000;
-export const GAME_SIZE = 2;
+export const GAME_SIZE = 1;
 const games: { [name: string]: Game } = {};
 
 const app = express();
@@ -92,5 +92,9 @@ io.on("connection", function (socket: any) {
     });
 
     console.log("Games: ", games);
+  });
+
+  socket.on("results", (rhythm: Sound[]) => {
+    // games[socket.rooms[0]].addResults(rhythm);
   });
 });

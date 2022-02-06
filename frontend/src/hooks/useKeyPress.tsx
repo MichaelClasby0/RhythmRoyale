@@ -1,7 +1,12 @@
+import { timeLog } from "console";
 import { useCallback, useEffect, useState } from "react";
 import Sound from "../components/Sound";
 
-export default function useKeypressBeats(targetKey: any, disabled: boolean) {
+export default function useKeypressBeats(
+  targetKey: any,
+  disabled: boolean,
+  time: number
+) {
   // State for keeping track of whether key is pressed
   const [beats, setBeats] = useState<Sound[]>([]);
   const [actionTime, setActionTime] = useState<number>(0);
@@ -10,35 +15,45 @@ export default function useKeypressBeats(targetKey: any, disabled: boolean) {
   // If pressed key is our target key then set to true
   // @ts-ignore
   const downHandler = useCallback(
-    ({ key }) => {
-      if (key === targetKey) {
-        const currentTime = Date.now();
+    (ev) => {
+      if (ev.repeat) {
+        return;
+      }
+      ev.preventDefault();
+      if (ev.key === targetKey) {
+        // if (beats[beats.length - 1].type === "gap") {
+        //   return;
+        // }
 
         if (beats.length !== 0) {
-          setBeats([
-            ...beats,
-            { type: "gap", duration: currentTime - actionTime },
-          ]);
+          setBeats([...beats, { type: "gap", duration: time - actionTime }]);
         }
-        setActionTime(currentTime);
+        setActionTime(time);
         setIsDown(true);
       }
     },
-    [actionTime, beats, targetKey]
+    [actionTime, beats, targetKey, time]
   );
 
   // If released key is our target key then set to false
   // @ts-ignore
   const upHandler = useCallback(
-    ({ key }) => {
-      if (key === targetKey) {
-        const currentTime = Date.now();
-        const duration = currentTime - actionTime;
+    (ev) => {
+      if (ev.repeat) {
+        return;
+      }
+      ev.preventDefault();
+      if (ev.key === targetKey) {
+        // if (beats[beats.length - 1].type === "beat") {
+        //   return;
+        // }
+        const duration = time - actionTime;
+        setActionTime(time);
         setBeats([...beats, { type: "beat", duration }]);
         setIsDown(false);
       }
     },
-    [actionTime, beats, targetKey]
+    [actionTime, beats, targetKey, time]
   );
 
   // Add event listeners
@@ -49,11 +64,9 @@ export default function useKeypressBeats(targetKey: any, disabled: boolean) {
     }
     // Remove event listeners on cleanup
     return () => {
-      if (!disabled) {
-        window.removeEventListener("keydown", downHandler);
-        window.removeEventListener("keyup", upHandler);
-      }
+      window.removeEventListener("keydown", downHandler);
+      window.removeEventListener("keyup", upHandler);
     };
   }, [downHandler, disabled, upHandler]); // Empty array ensures that effect is only run on mount and unmount
-  return { isDown, beats };
+  return { isDown, beats, actionTime };
 }

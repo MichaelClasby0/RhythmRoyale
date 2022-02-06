@@ -7,7 +7,12 @@ import Sound from "./Sound";
 function Vis(props: { onEnd: (beats: Sound[]) => void }) {
   const { onEnd } = props;
   const [disabled, setDisabled] = useState(false);
-  const { isDown, beats } = useKeypressBeats(" ", disabled);
+  const [totalTime, setTotalTime] = useState(0);
+  const { isDown, beats, actionTime } = useKeypressBeats(
+    " ",
+    disabled,
+    totalTime
+  );
   const time_limit = 3 * 1000;
   const [circles, setCircles] = useState<Array<number>>([]);
   const [time, setTime] = useState(5);
@@ -17,7 +22,14 @@ function Vis(props: { onEnd: (beats: Sound[]) => void }) {
       if (time * 5 > time_limit) {
         setDisabled(true);
         clearInterval(interval);
-        onEnd(beats);
+        if (isDown) {
+          onEnd([
+            ...beats,
+            { type: "beat", duration: time_limit - actionTime },
+          ]);
+        } else {
+          onEnd([...beats, { type: "gap", duration: time_limit - actionTime }]);
+        }
         return;
       }
 
@@ -25,9 +37,10 @@ function Vis(props: { onEnd: (beats: Sound[]) => void }) {
         setCircles([...circles, time]);
       }
       setTime(time + 2);
+      setTotalTime(totalTime + 10);
     }, 10);
     return () => clearInterval(interval);
-  }, [time, circles, time_limit, isDown]);
+  }, [time, circles, time_limit, isDown, onEnd, beats, totalTime, actionTime]);
 
   return (
     <PrimaryContent>

@@ -1,16 +1,12 @@
 import { GAME_SIZE } from ".";
 import Sound from "./Sound";
 
-interface PlayerReg {
-  name: string;
-  time: number;
-}
-
 export default class Game {
   players: { [name: string]: number };
   socketNames: { [socketId: string]: string };
   confirmedPlayers: Set<string>;
   id: string;
+  
 
   constructor(id: string) {
     this.id = id;
