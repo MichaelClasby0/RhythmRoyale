@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import { backendUrl } from "../config";
 import PrimaryContent from "../layout/PrimaryContent";
 
 enum GameState {
@@ -12,7 +13,7 @@ enum GameState {
 export default function Game() {
   const { gameId } = useParams();
   const socket = useMemo(
-    () => io("http://localhost:5000", { autoConnect: false }),
+    () => io(backendUrl, { autoConnect: false }),
     []
   );
   const [gameState, setGameState] = useState(GameState.JoiningGame);
