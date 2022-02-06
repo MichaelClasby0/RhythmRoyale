@@ -1,4 +1,5 @@
 import { GAME_SIZE } from ".";
+import Sound from "./Sound";
 
 interface PlayerReg {
   name: string;
@@ -46,6 +47,16 @@ export default class Game {
     this.confirmedPlayers.delete(name);
     delete this.players[name];
     delete this.socketNames[socketId];
+  }
+
+  getRandomRhythm(): Sound[] {
+    return [
+      { type: "beat", duration: 1000 },
+      { type: "gap", duration: 500 },
+      { type: "beat", duration: 2000 },
+      { type: "gap", duration: 500 },
+      { type: "beat", duration: 1000 },
+    ];
   }
 
   isFull() {
