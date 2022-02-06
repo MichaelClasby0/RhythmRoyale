@@ -31,20 +31,24 @@ export function generateRhythm(length: number = 3000, tempo: number = 120) {
     { type: "beat", duration: millisecondsPerBeat },
     { type: "beat", duration: millisecondsPerBeat / 2 },
     { type: "beat", duration: millisecondsPerBeat / 4 },
-    { type: "beat", duration: millisecondsPerBeat / 8 },
+    // { type: "beat", duration: millisecondsPerBeat / 8 },
   ];
   const possibleGaps: Sound[] = [
     { type: "gap", duration: millisecondsPerBeat / 2 },
     { type: "gap", duration: millisecondsPerBeat / 4 },
-  ]
-  const possibleNoteTypes: Sound[][] = [possibleBeats, possibleGaps]
-  var noteTypeIndex: number = Math.floor(Math.random() * possibleNoteTypes.length)
-  var currentNoteType: Sound[] = possibleNoteTypes[noteTypeIndex]
+  ];
+  const possibleNoteTypes: Sound[][] = [possibleBeats, possibleGaps];
+  var noteTypeIndex: number = Math.floor(
+    Math.random() * possibleNoteTypes.length
+  );
+  var currentNoteType: Sound[] = possibleNoteTypes[noteTypeIndex];
   const rhythm: Sound[] = [];
 
   while (length > 0) {
-    const noteIndex: number = Math.floor(Math.random() * currentNoteType.length);
-    const currentNote: Sound= currentNoteType[noteIndex];
+    const noteIndex: number = Math.floor(
+      Math.random() * currentNoteType.length
+    );
+    const currentNote: Sound = currentNoteType[noteIndex];
     if (length - currentNote.duration < 0) {
       continue;
     }
@@ -53,9 +57,8 @@ export function generateRhythm(length: number = 3000, tempo: number = 120) {
     length -= currentNote.duration;
 
     noteTypeIndex++;
-    noteTypeIndex %= possibleNoteTypes.length
-    currentNoteType = possibleNoteTypes[noteTypeIndex]
-
+    noteTypeIndex %= possibleNoteTypes.length;
+    currentNoteType = possibleNoteTypes[noteTypeIndex];
   }
 
   return rhythm;
