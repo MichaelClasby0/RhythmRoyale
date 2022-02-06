@@ -19,6 +19,10 @@ export default class Game {
     return this.players.length === GAME_SIZE;
   }
 
+  isEmpty() {
+    return this.players.length === 0;
+  }
+
   confirmPlayer(player: string) {
     this.confirmedPlayers.push(player);
   }

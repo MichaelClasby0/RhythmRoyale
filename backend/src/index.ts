@@ -39,15 +39,22 @@ app.get("/", (req, res) => {
 app.get("/api/room", (req, res) => {
   res.setHeader("content-type", "text/plain");
 
+  let roomFound = false;
   // Improve this to be robust for people leaving rooms (reserve space for user)
   Object.entries(games).forEach(([id, game]) => {
     if (!game.isFull()) {
       game.addPlayer(req.query.name as string);
       res.send(id);
+      roomFound = true;
       return;
     }
   });
 
+  if (roomFound) {
+    return;
+  }
+  
+  console.log("Creating new room");
   const game = new Game(Math.random().toString(20).slice(2, 9));
   game.addPlayer(req.query.name as string);
   games[game.id] = game;
@@ -65,9 +72,20 @@ io.on("connection", function (socket: any) {
     } else {
       socket.emit("waiting_for_players");
     }
+
+    console.log("Games: ", games);
   });
 
   socket.on("disconnect", function () {
     console.log("user disconnected");
+
+    // Wont actually work until people get removed from games
+    Object.entries(games).forEach(([id, game]) => {
+      if (game.isEmpty()) {
+        delete games[id];
+      }
+    });
+
+    console.log("Games: ", games);
   });
 });
