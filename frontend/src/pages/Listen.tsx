@@ -1,29 +1,24 @@
 import PrimaryContent from "../layout/PrimaryContent";
-import {useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
-
+import * as Tone from "tone";
+import { useEffect } from "react";
 
 function Listen() {
-    const navigate = useNavigate();
-    const [soundComplete, setSoundComplete] = useState(false);
-    useEffect(
-        () => {
-            let dummyTimer = setTimeout(() => setSoundComplete(true), 5 * 1000);
-            return () => {
-                clearTimeout(dummyTimer);
-            };
-        },
-        []
-    );
-    return(
-        <PrimaryContent>
-            {
-                soundComplete
-            ? navigate("/play")
-            : <h4>Listen carefully ...</h4>
-            }
-        </PrimaryContent>
-    )
+  const synthA = new Tone.PolySynth().toDestination();
+  const plucky = new Tone.PluckSynth().toDestination();
+
+  const loopA = new Tone.Loop((time) => {
+    plucky.triggerAttack("C4", "+0.5");
+  }, "4n").start(0);
+
+  useEffect(() => {
+    Tone.Transport.start();
+  });
+
+  return (
+    <PrimaryContent>
+      <button onClick={async () => await Tone.start()}>Start</button>
+    </PrimaryContent>
+  );
 }
 
 export default Listen;
