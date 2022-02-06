@@ -4,26 +4,34 @@ import { useState, useEffect } from "react";
 import useKeypressBeats from "../hooks/useKeyPress";
 
 function Vis() {
+<<<<<<< HEAD
   const isDown = useKeypressBeats(" ").isDown;
   const time_limit = 3 * 1000;
   const [circles, setCircles] = useState<Array<number>>([]);
   const [time, setTime] = useState(5);
+=======
+    const isDown = useKeypressBeats(" ").isDown
+    const time_limit = 3 * 1000
+    const [circles, setCircles] = useState<Array<number>>([])
+    const [time, setTime] = useState(5);
+>>>>>>> 35bcb7c113b488dcb76e2521b6a4b802d35708cd
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (time * 5 > time_limit) {
-        clearInterval(interval);
-        return;
-      }
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (time * 5 > time_limit) {
+                clearInterval(interval);
+                return;
+            }
 
-      if (isDown) {
-        setCircles([...circles, time]);
-      }
-      setTime(time + 2);
-    }, 10);
-    return () => clearInterval(interval);
-  }, [time, circles, time_limit, isDown]);
+            if (isDown) {
+                setCircles([...circles, time])
+            }
+            setTime(time + 2)
+        }, 10);
+        return () => clearInterval(interval);
+    }, [time, circles]);
 
+<<<<<<< HEAD
   return (
     <PrimaryContent>
       <div className="big-rect">
@@ -108,5 +116,81 @@ function Anim({ original, correct }) {
     </PrimaryContent>
   );
 }
+=======
+    return (
+        <PrimaryContent>
+            <div className="big-rect">
+                {
+                    circles.map((circle, index) => {
+                        return <span className="big-circle" style={{left: circle.toString() + "px"}} key={index}/>
+                    })
+                }
+            </div>
+        </PrimaryContent>
+    );
+};
 
-export { Vis, Anim };
+// @ts-ignore
+function Anim({original, correct}) {
+
+    if (!original) {
+        original = [
+            {type: "beat", duration: 600},
+            {type: "gap", duration: 400},
+            {type: "beat", duration: 500},
+            {type: "gap", duration: 300},
+            {type: "beat", duration: 1200},
+        ]
+    }
+
+    const time_limit = 800
+    const [beats, setBeats] = useState(original)
+    const [circles, setCircles] = useState<Array<number>>([])
+    const [time, setTime] = useState(20);
+    const [done, setDone] = useState(false)
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (time * 2.5 > time_limit) {
+                setDone(true)
+                clearInterval(interval);
+                return;
+            }
+>>>>>>> 35bcb7c113b488dcb76e2521b6a4b802d35708cd
+
+            const curr = beats[0]
+            if (curr.type === "beat") {
+                setCircles([...circles, time])
+            }
+            if (curr.duration < 10) {
+                setBeats(beats.slice(1))
+            } else {
+                setBeats([{type: curr.type, duration: curr.duration - 10}, ...beats.slice(1)])
+            }
+            setTime(time + 1)
+        }, 10);
+        return () => clearInterval(interval);
+    }, [time, circles, beats]);
+
+    return (
+        <PrimaryContent>
+            {
+                (done)
+                    ? <div className="result" style = {{background: correct ? "green" : "red"}}>
+                        {correct ? "Correct" : "Incorrect"}
+                    </div>
+                    : null
+            }
+            <div className="rect">
+                {
+                    circles.map((circle, index) => {
+                        return <span className="circle" style={{left: circle.toString() + "px"}} key={index}/>
+                    })
+                }
+            </div>
+        </PrimaryContent>
+    );
+};
+
+
+export {Vis, Anim};
