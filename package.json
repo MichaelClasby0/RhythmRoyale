@@ -2,7 +2,7 @@
   "name": "rhythm-royale",
   "description": "Rhythm based battle royale game.",
   "scripts": {
-    "start": "cd backend/ && yarn install && yarn run start",
+    "start": "cd backend/ && yarn install --global && yarn run start",
     "build": "cd frontend/ && yarn install && yarn run build"
   },
   "engines": {
