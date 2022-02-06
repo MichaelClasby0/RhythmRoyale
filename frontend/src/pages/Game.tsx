@@ -13,6 +13,7 @@ enum GameState {
   Listening,
   Countdown,
   WaitingForResults,
+  Results,
   Started,
 }
 
@@ -22,6 +23,7 @@ export default function Game() {
   const [gameState, setGameState] = useState(GameState.JoiningGame);
   const [searchParams] = useSearchParams();
   const [rhythm, setRhythm] = useState<Sound[]>([]);
+  const [correct, setCorrect] = useState<boolean>(false);
 
   const [countdownTime, setCountdownTime] = useState(3);
 
@@ -38,6 +40,10 @@ export default function Game() {
         console.log("STARTING ROUND");
         setGameState(GameState.Listening);
         setRhythm(r);
+      });
+      socket.on("correct", (correct: boolean) => {
+        setCorrect(correct);
+        setGameState(GameState.Results);
       });
     }
 
@@ -107,6 +113,8 @@ export default function Game() {
         <h1>{countdownTime === 0 ? "GO!" : countdownTime}</h1>
       </div>
     );
+  } else if (gameState === GameState.Results) {
+    return correct ? <div>Correct!</div> : <div>Incorrect!</div>;
   }
 
   return (

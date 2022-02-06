@@ -1,18 +1,35 @@
 import { GAME_SIZE } from ".";
-import Sound from "./Sound";
+import Sound, { areSoundsMatch, generateRhythm } from "./Sound";
 
 export default class Game {
   players: { [name: string]: number };
   socketNames: { [socketId: string]: string };
-  confirmedPlayers: Set<string>;
   id: string;
   
+
+  currentPlayers: Set<string>;
+  currentRyhthm: Sound[] = [];
+  guesses: { [socketId: string]: Sound[] } = {};
+
+  addGuess(socketId: string, guess: Sound[]) {
+    this.guesses[socketId] = guess;
+  }
+
+  verifyGuesses() {
+    const correctGuesses: { [name: string]: boolean } = {};
+    for (const socketId in this.guesses) {
+      const guess = this.guesses[socketId];
+      correctGuesses[socketId] = areSoundsMatch(guess, this.currentRyhthm);
+    }
+
+    return correctGuesses;
+  }
 
   constructor(id: string) {
     this.id = id;
     this.players = {};
     this.socketNames = {};
-    this.confirmedPlayers = new Set<string>();
+    this.currentPlayers = new Set<string>();
   }
 
   addPlayer(player: string) {
@@ -23,36 +40,30 @@ export default class Game {
     for (const name in Object.keys(this.players)) {
       if (
         this.players[name] + 5000 < Date.now() &&
-        !(name in this.confirmedPlayers)
+        !(name in this.currentPlayers)
       ) {
         delete this.players[name];
       }
     }
-    console.log(this.players);
   }
 
   confirmPlayer(player: string, socketId: string) {
     this.cleanup();
-    this.confirmedPlayers.add(player);
+    this.currentPlayers.add(player);
     this.socketNames[socketId] = player;
   }
 
   removeConfirmedPlayer(socketId: string) {
     const name = this.socketNames[socketId];
 
-    this.confirmedPlayers.delete(name);
+    this.currentPlayers.delete(name);
     delete this.players[name];
     delete this.socketNames[socketId];
   }
 
   getRandomRhythm(): Sound[] {
-    return [
-      { type: "beat", duration: 1000 },
-      { type: "gap", duration: 500 },
-      { type: "beat", duration: 2000 },
-      { type: "gap", duration: 500 },
-      { type: "beat", duration: 1000 },
-    ];
+    this.currentRyhthm = generateRhythm();
+    return this.currentRyhthm;
   }
 
   isFull() {
@@ -67,6 +78,13 @@ export default class Game {
 
   allJoined() {
     this.cleanup();
-    return this.confirmedPlayers.size === GAME_SIZE;
+    return this.currentPlayers.size === GAME_SIZE;
+  }
+
+  allGuessed() {
+    return (
+      Object.keys(this.guesses).length ===
+      Object.keys(this.currentPlayers).length
+    );
   }
 }

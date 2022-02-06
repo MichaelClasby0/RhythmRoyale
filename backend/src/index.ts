@@ -95,6 +95,16 @@ io.on("connection", function (socket: any) {
   });
 
   socket.on("results", (rhythm: Sound[]) => {
-    // games[socket.rooms[0]].addResults(rhythm);
+    const game = games[socket.rooms[0]];
+    game.addGuess(socket.id, rhythm);
+
+    if (game.allGuessed()) {
+      const results = game.verifyGuesses();
+
+      Object.keys(results).forEach((socketId) => {
+        const c = io.sockets.sockets.get('socketId');
+        c.emit("correct", results[socketId]);
+      });
+    }
   });
 });
