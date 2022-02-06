@@ -1,6 +1,29 @@
 
 .circle {
     display: flex;
+    width: 5px;
+    height: 5px;
+    position: absolute;
+    background-color: green;
+    border-radius: 50%;
+    margin-top: 47px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.rect{
+    width: 350px;
+    height: 100px;
+    background: transparent;
+    position: relative;
+    outline:solid 2px black;
+    vertical-align: middle;
+}
+
+
+
+.big-circle {
+    display: flex;
     width: 10px;
     height: 10px;
     position: absolute;
@@ -11,12 +34,19 @@
     white-space: nowrap;
 }
 
-.rect{
+.big-rect{
     width: 700px;
     height: 200px;
     background: transparent;
     position: relative;
     outline:solid 2px black;
     vertical-align: middle;
+}
+
+.result {
+    width: 100px;
+    height: 25px;
+    color: white;
+    text-align: center;
 }
 
