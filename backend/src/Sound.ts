@@ -27,24 +27,35 @@ export function areSoundsMatch(a: Sound[], b: Sound[]) {
 // length in milliseconds
 export function generateRhythm(length: number = 3000, tempo: number = 120) {
   const millisecondsPerBeat: number = (tempo / 60) * 1000;
-  const possibleNotes: Sound[] = [
+  const possibleBeats: Sound[] = [
     { type: "beat", duration: millisecondsPerBeat },
     { type: "beat", duration: millisecondsPerBeat / 2 },
     { type: "beat", duration: millisecondsPerBeat / 4 },
     { type: "beat", duration: millisecondsPerBeat / 8 },
+  ];
+  const possibleGaps: Sound[] = [
     { type: "gap", duration: millisecondsPerBeat / 2 },
     { type: "gap", duration: millisecondsPerBeat / 4 },
-  ];
+  ]
+  const possibleNoteTypes: Sound[][] = [possibleBeats, possibleGaps]
+  var noteTypeIndex: number = Math.floor(Math.random() * possibleNoteTypes.length)
+  var currentNoteType: Sound[] = possibleNoteTypes[noteTypeIndex]
   const rhythm: Sound[] = [];
 
   while (length > 0) {
-    const noteIndex: number = Math.floor(Math.random() * possibleNotes.length);
-    if (length - possibleNotes[noteIndex].duration < 0) {
+    const noteIndex: number = Math.floor(Math.random() * currentNoteType.length);
+    const currentNote: Sound= currentNoteType[noteIndex];
+    if (length - currentNote.duration < 0) {
       continue;
     }
 
-    rhythm.push(possibleNotes[noteIndex]);
-    length -= possibleNotes[noteIndex].duration;
+    rhythm.push(currentNote);
+    length -= currentNote.duration;
+
+    noteTypeIndex++;
+    noteTypeIndex %= possibleNoteTypes.length
+    currentNoteType = possibleNoteTypes[noteTypeIndex]
+
   }
 
   return rhythm;
