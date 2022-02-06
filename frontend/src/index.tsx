@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {BrowserRouter} from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -13,9 +12,7 @@ ReactDOM.render(
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
           crossOrigin="anonymous"
       />
-      <BrowserRouter>
           <App />
-      </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );

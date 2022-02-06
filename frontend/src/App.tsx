@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, {useMemo} from "react";
 import {Routes, Route} from "react-router-dom";
 import {io} from "socket.io-client";
@@ -20,6 +21,21 @@ function App() {
             </Routes>
         </SocketContext.Provider>
     );
+=======
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import Home from "./pages/Home";
+import Game from "./pages/Game";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/game/:gameId" element={<Game />} />
+      </Routes>
+    </BrowserRouter>
+  );
+>>>>>>> Stashed changes
 }
 
 export default App;

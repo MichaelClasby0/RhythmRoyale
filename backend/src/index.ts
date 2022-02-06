@@ -1,9 +1,20 @@
+import cors from "cors";
 import express from "express";
 import path from "path";
+import Game from "./game";
+
+// reserve space for user
 
 const PORT = process.env.PORT || 5000;
-
+export const GAME_SIZE = 2;
 const app = express();
+
+app.use(express.json());
+app.use(express.static("../../frontend/build"));
+app.use(cors());
+
+const games: { [name: string]: Game } = {};
+
 const server = require("http").createServer(app);
 
 app.use(express.json());
@@ -19,7 +30,6 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"],
   },
 });
-const rooms: { [name: string]: string[] } = { }
 
 app.get("/api/hello", (req, res) => {
   res.send({ message: "Hello" });
@@ -29,10 +39,42 @@ app.get("/", (req, res) => {
   res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
 });
 
+app.get("/api/room", (req, res) => {
+  res.setHeader("content-type", "text/plain");
 
-io.on("connection", function (socket: any) {
-  const newGameId = Math.random().toString(20).slice(2, 6);
+  // Improve this to be robust for people leaving rooms (reserve space for user)
+  Object.entries(games).forEach(([id, game]) => {
+    if (!game.isFull()) {
+      game.addPlayer(req.query.name as string);
+      res.send(id);
+      return;
+    }
+  });
 
+  const game = new Game(Math.random().toString(20).slice(2, 9));
+  game.addPlayer(req.query.name as string);
+  games[game.id] = game;
+  res.send(game.id);
 });
 
+io.on("connection", function (socket: any) {
+  console.log("a user connected");
 
+  socket.on("join", (gameId: string, name: string) => {
+    socket.join(gameId);
+    games[gameId].confirmPlayer(name);
+    if (games[gameId].allJoined()) {
+      io.to(gameId).emit("game_start");
+    } else {
+      socket.emit("waiting_for_players");
+    }
+  });
+
+  socket.on("disconnect", function () {
+    console.log("user disconnected");
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
