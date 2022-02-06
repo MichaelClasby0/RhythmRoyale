@@ -3,7 +3,7 @@ import { Instrument } from "tone/build/esm/instrument/Instrument";
 
 export default interface Sound {
   type: "beat" | "gap";
-  duration: number;
+  duration: number; // in milliseconds
 }
 
 export function convertToSound(
