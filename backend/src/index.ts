@@ -7,18 +7,15 @@ import Game from "./game";
 
 const PORT = process.env.PORT || 5000;
 export const GAME_SIZE = 2;
-const app = express();
-
-app.use(express.json());
-app.use(express.static("../../frontend/build"));
-app.use(cors());
-
 const games: { [name: string]: Game } = {};
 
+const app = express();
 const server = require("http").createServer(app);
 
 app.use(express.json());
 app.use(express.static("../frontend/build"));
+app.use(cors());
+
 server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
@@ -73,8 +70,4 @@ io.on("connection", function (socket: any) {
   socket.on("disconnect", function () {
     console.log("user disconnected");
   });
-});
-
-server.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
 });
