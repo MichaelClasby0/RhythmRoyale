@@ -4,7 +4,7 @@
   "scripts": {
     "start": "yarn --cwd backend/ run start",
     "build": "yarn --cwd frontend/ run build && yarn --cwd backend/ run build",
-    "install": "yarn --cwd frontend/ install && yarn --cwd backend/ install"
+    "install": "yarn --cwd frontend/ install --production=false && yarn --cwd backend/ install --production=false"
   },
   "engines": {
     "node": "17.3.0",
