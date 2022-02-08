@@ -1,9 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import Game from "./pages/Game";
-import Listen from "./pages/Listen";
-import Record from "./pages/Record";
-import {Anim, Vis} from "./components/Visualisation";
 import Replay from "./pages/Replay";
 
 function App() {
